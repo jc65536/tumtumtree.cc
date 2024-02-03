@@ -2,22 +2,25 @@
   import { enhance } from "$app/forms";
   import { page } from "$app/stores";
   import type { ActionData } from "./$types";
+  import { confetti } from "@neoconfetti/svelte";
 
   const name = $page.url.searchParams.get("name") ?? "stranger";
 
   export let form: ActionData;
 </script>
 
-{#if form?.exclam}
-  <p>{form.exclam}</p>
+<div id="container">
+  {#if form?.exclam}
+    <p>{form.exclam}</p>
 
-  {#if form.exclam == "yay!"}
-    <a href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NW0wMTdxOWNzZXRoM2tyNHJmdjZ1cmk5bXAgMmI4MDhiZWQ5YzUxZDJlMzgyZTIzZmFiZGMyODYwZWE3MmI4OTA4MzY4MDQ2MjI3MzZiNzZlMGVjNTIyZmYwMUBn&tmsrc=2b808bed9c51d2e382e23fabdc2860ea72b890836804622736b76e0ec522ff01%40group.calendar.google.com">
-      Here's a Google Calendar event for you!
-    </a>
-  {/if}
-{:else}
-  <div id="container">
+    {#if form.exclam == "yay!"}
+      <a href="https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=NW0wMTdxOWNzZXRoM2tyNHJmdjZ1cmk5bXAgMmI4MDhiZWQ5YzUxZDJlMzgyZTIzZmFiZGMyODYwZWE3MmI4OTA4MzY4MDQ2MjI3MzZiNzZlMGVjNTIyZmYwMUBn&tmsrc=2b808bed9c51d2e382e23fabdc2860ea72b890836804622736b76e0ec522ff01%40group.calendar.google.com">
+        Here's a Google Calendar event for you!
+      </a>
+
+      <div use:confetti />
+    {/if}
+  {:else}
     <h2>Hi {name}</h2>
     <h1>You're invited!</h1>
     <dl>
@@ -54,18 +57,19 @@
         No
       </button>
     </form>
-  </div>
+  {/if}
+</div>
 
-  <style>
-    .response {
-      display: inline-flex;
-      flex-direction: column;
-    }
+<style>
+  .response {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    #container {
-      max-width: 30rem;
-      margin: auto;
-      font: comic-sans;
-    }
-  </style>
-{/if}
+  #container {
+    max-width: 30rem;
+    margin: auto;
+    font: comic-sans;
+  }
+</style>
