@@ -1,0 +1,8 @@
+#!/bin/bash
+
+npm run build
+
+source .env
+export PORT PROTOCOL_HEADER HOST_HEADER
+
+node build
