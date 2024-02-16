@@ -13,7 +13,7 @@
         body: code,
       });
       const parsed = await res.text();
-      console.log(parsed);
+      pre.textContent = parsed;
     });
   });
 </script>
