@@ -12,7 +12,10 @@ public class Bridge {
     static BufferedWriter out;
 
     synchronized static void setSocket(Socket s) throws Exception {
-        socket.close();
+        if (socket != null) {
+            socket.close();
+        }
+
         socket = s;
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -33,6 +36,10 @@ public class Bridge {
             System.out.printf("Request: %s%n", sanitized);
 
             final var parsed = sync(() -> {
+                if (socket == null || in == null || out == null) {
+                    return "Parser not connected";
+                }
+
                 try {
                     out.write(sanitized);
                     out.newLine();
