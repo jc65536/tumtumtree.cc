@@ -1,7 +1,5 @@
 import java.net.*;
-import java.net.http.*;
-import java.util.concurrent.*;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.io.*;
 
 import com.sun.net.httpserver.*;
@@ -36,20 +34,20 @@ public class Bridge {
             System.out.printf("Request: %s%n", sanitized);
 
             final var parsed = sync(() -> {
-                if (socket == null || in == null || out == null) {
-                    return "Parser not connected";
+                if (socket != null) {
+                    try {
+                        out.write(sanitized);
+                        out.newLine();
+                        out.flush();
+
+                        return in.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        socket = null;
+                    }
                 }
 
-                try {
-                    out.write(sanitized);
-                    out.newLine();
-                    out.flush();
-
-                    return in.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return "err";
-                }
+                return "Parser not connected";
             });
 
             System.out.printf("Response: %s%n", parsed);
