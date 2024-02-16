@@ -20,7 +20,6 @@ public class Bridge {
     public static void main(String[] args) throws Exception {
         final var socketServer = new ServerSocket(6969);
         final var httpServer = HttpServer.create(new InetSocketAddress(5000), 0);
-        final var executor = Executors.newVirtualThreadPerTaskExecutor();
 
         final var socket = socketServer.accept();
         final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -60,7 +59,7 @@ public class Bridge {
             exchange.close();
         });
 
-        httpServer.setExecutor(executor);
+        httpServer.setExecutor(null);
         httpServer.start();
     }
 }
