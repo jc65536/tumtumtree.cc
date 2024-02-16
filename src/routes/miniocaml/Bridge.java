@@ -34,20 +34,28 @@ public class Bridge {
             System.out.printf("Request: %s%n", sanitized);
 
             final var parsed = sync(() -> {
-                if (socket != null) {
-                    try {
-                        out.write(sanitized);
-                        out.newLine();
-                        out.flush();
-
-                        return in.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        socket = null;
-                    }
+                if (socket == null) {
+                    return "Parser not connected";
                 }
 
-                return "Parser not connected";
+                try {
+                    out.write(sanitized);
+                    out.newLine();
+                    out.flush();
+
+                    final var line = in.readLine();
+
+                    if (line == null) {
+                        socket = null;
+                        return "Parser not connected";
+                    }
+
+                    return line;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    socket = null;
+                    return e.getMessage();
+                }
             });
 
             System.out.printf("Response: %s%n", parsed);
