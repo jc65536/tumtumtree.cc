@@ -7,25 +7,24 @@ import java.io.*;
 import com.sun.net.httpserver.*;
 
 public class Bridge {
-    final static WebSocket.Listener wsListener = new WebSocket.Listener() {
+    static Socket socket;
+    static BufferedReader in;
+    static BufferedWriter out;
 
-    };
+    synchronized static void setSocket(Socket s) throws Exception {
+        socket.close();
+        socket = s;
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    }
 
-    static <T> T sync(Object lock, Supplier<T> f) {
-        synchronized (lock) {
-            return f.get();
-        }
+    synchronized static <T> T sync(Supplier<T> f) {
+        return f.get();
     }
 
     public static void main(String[] args) throws Exception {
         final var socketServer = new ServerSocket(6969);
         final var httpServer = HttpServer.create(new InetSocketAddress(5000), 0);
-
-        final var socket = socketServer.accept();
-        final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        final var out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
-        System.out.println("Parser connected");
 
         httpServer.createContext("/", exchange -> {
             final var body = new String(exchange.getRequestBody().readAllBytes());
@@ -33,7 +32,7 @@ public class Bridge {
 
             System.out.printf("Request: %s%n", sanitized);
 
-            final var parsed = sync(socket, () -> {
+            final var parsed = sync(() -> {
                 try {
                     out.write(sanitized);
                     out.newLine();
@@ -60,5 +59,10 @@ public class Bridge {
         });
 
         httpServer.start();
+
+        while (true) {
+            setSocket(socketServer.accept());
+            System.out.println("Parser connected");
+        }
     }
 }
