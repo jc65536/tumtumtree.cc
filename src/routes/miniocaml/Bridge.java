@@ -59,7 +59,6 @@ public class Bridge {
             exchange.close();
         });
 
-        httpServer.setExecutor(null);
         httpServer.start();
     }
 }
