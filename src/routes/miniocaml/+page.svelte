@@ -8,7 +8,7 @@
 
     form.addEventListener("submit", async (_) => {
       const code = textarea.value;
-      const res = await fetch("https://tumtumtree.cc:5000", {
+      const res = await fetch("https://bridge.tumtumtree.cc", {
         method: "POST",
         body: code,
       });
