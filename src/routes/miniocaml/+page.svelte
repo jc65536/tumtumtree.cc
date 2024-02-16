@@ -1,9 +1,21 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
-  import { page } from "$app/stores";
-  import type { ActionData } from "./$types";
+  import { onMount } from "svelte";
 
-  export let form: ActionData;
+  onMount(() => {
+    const form = document.querySelector("form")!;
+    const textarea = document.querySelector("textarea")!;
+    const pre = document.querySelector("pre")!;
+
+    form.addEventListener("submit", async (_) => {
+      const code = textarea.value;
+      const res = await fetch("http://localhost:5000", {
+        method: "POST",
+        body: code,
+      });
+      const parsed = await res.text();
+      console.log(parsed);
+    });
+  });
 </script>
 
 <p>
@@ -11,21 +23,16 @@
   <a href="https://github.com/mizlan/ocaml_gram">Original project here.</a>
 </p>
 
-<form method="post" action="?/parse" use:enhance>
-  {#if form?.src}
-    <textarea name="src">{form.src}</textarea>
-  {:else}
-    <textarea name="src"></textarea>
-  {/if}
+<form>
+  <textarea></textarea>
   <button>Parse</button>
 </form>
 
-{#if form?.parsed}
-  <pre>{form.parsed}</pre>
-{/if}
+<pre></pre>
 
 <style>
   textarea {
     width: 24rem;
+    height: 12rem;
   }
 </style>

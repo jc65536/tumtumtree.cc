@@ -1,0 +1,6 @@
+#!/bin/bash
+
+javac Bridge.java
+echo "Compiled Bridge"
+
+java Bridge
